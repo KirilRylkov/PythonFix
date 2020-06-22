@@ -1,0 +1,41 @@
+{% extends "article/base.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+        {% if object.author == user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'article-update' object.id %}">Обновить</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'article-delete' object.id %}">Удалить</a>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ object.title }}</h2>
+      <p class="article-content">{{ object.content }}</p>
+    </div>
+  </article>
+    <div class="media-body">
+        {% if user.username %}
+        <form action="{% url 'comment-detail' object.id%}" method="POST">
+        {% csrf_token %}
+            <div class="article-metadata">
+                <textarea name="text" placeholder="Напишите комментарий" cols="72" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Запостить</button>
+            </div>
+        </form>
+        {% endif %}
+    {% for item in object.comment_set.all%}
+          <article>
+            <div >
+                <p class="article-content">{{ item.author_name }}</p>
+              <p class="article-content">{{ item.comment_text }}</p>
+            </div>
+          </article>
+
+        {% endfor %}
+    </div>
+{% endblock content %}
